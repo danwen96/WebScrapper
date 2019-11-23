@@ -1,20 +1,20 @@
 import time
 
-import pandas as pd
+# import pandas as pd
 from selenium import webdriver
 from bs4 import BeautifulSoup
-import collections
+# import collections
 
 
 DRIVER_PATH = "/usr/bin/chromedriver"
-
-Book = collections.namedtuple('Book', 'book_name author_name book_rating nmb_of_ratings')
+# Book = collections.namedtuple('Book', 'book_name book_page_href author_name book_rating nmb_of_ratings')
 
 
 class WebScraper:
 
     def __init__(self):
-        self.TOP_100_BOOKS_URL= "https://lubimyczytac.pl/top100"
+        self.BASE_URL="https://lubimyczytac.pl"
+        self.TOP_100_BOOKS_URL= "{}/top100".format(self.BASE_URL)
         # options = webdriver.ChromeOptions()
         # options.add_argument('headless')
         self.driver = webdriver.Chrome(DRIVER_PATH)
@@ -23,8 +23,6 @@ class WebScraper:
 
     def get_top_100_data(self):
         self.driver.get(self.TOP_100_BOOKS_URL)
-
-        books_collection = []
 
         cookies_button = self.driver.find_element_by_xpath("/html/body")
         cookies_button.click()
@@ -38,7 +36,6 @@ class WebScraper:
 
             if page_numb == self.NMB_OF_PAGES+1:
                 break
-
             self._load_page(page_numb)
 
         return books_list
@@ -58,20 +55,88 @@ class WebScraper:
         return books_collection_from_page
 
     @staticmethod
-    def _get_data_from_book_element(book_soup) -> Book:
-        book_name_soup = book_soup.find('a', attrs={'class': 'authorAllBooks__singleTextTitle'})
-        author_name_soup = book_soup.find('div', attrs={'class': 'authorAllBooks__singleTextAuthor'})\
-                                    .find('a')
-        book_rating_soup = book_soup.find('span', attrs={'class': 'listLibrary__ratingStarsNumber'})
-        nmb_of_ratings_soup = book_soup.find('div', attrs={'class': 'listLibrary__ratingAll'})
-        return Book(
-            book_name=book_name_soup.text.strip(),
-            author_name=author_name_soup.text.strip(),
-            book_rating=float(book_rating_soup.text.strip().replace(',', '.')),
-            nmb_of_ratings=int(nmb_of_ratings_soup.text.replace('ocen', '').strip())
-        )
+    def _get_data_from_book_element(book_soup) -> dict:
+        book_name_soup = book_soup\
+            .find('a', attrs={'class': 'authorAllBooks__singleTextTitle'})
+        # print(book_name_soup)
+        # print(book_name_soup.get_attribute('href'))
+        author_name_soup = book_soup\
+            .find('div', attrs={'class': 'authorAllBooks__singleTextAuthor'})\
+            .find('a')
+        book_rating_soup = book_soup\
+            .find('span', attrs={'class': 'listLibrary__ratingStarsNumber'})
+        nmb_of_ratings_soup = book_soup\
+            .find('div', attrs={'class': 'listLibrary__ratingAll'})
+        return {
+            'book_name': book_name_soup.text.strip(),
+            'book_page_href': book_name_soup.attrs['href'],
+            'author_name': author_name_soup.text.strip(),
+            'book_rating': float(book_rating_soup.text.strip().replace(',', '.')),
+            'nmb_of_ratings': int(nmb_of_ratings_soup.text.replace('ocen', '').strip())
+        }
 
 
+class BookDetailsWebScrapper(WebScraper):
+
+    def __init__(self):
+        super().__init__()
+
+    def add_books_details(self, books_dict_with_href):
+        for book_dict in books_dict_with_href:
+            self._add_book_details(book_dict)
+
+    def _add_book_details(self, book_dict):
+        book_page_soup = self._get_book_content(book_dict['book_page_href'])
+        book_dict['genres'] = book_page_soup\
+            .find('a', attrs={'class': 'book__category'}).text.strip()
+        book_dict['nmb_of_opinions'] = int(book_page_soup
+                                           .find('a', attrs={'href': '#lista-opinii'}).text
+                                           .replace('opinii', '').strip())
+        try:
+            book_dict['nmb_of_pages'] = int(book_page_soup
+                                            .find('span', attrs={'class': 'book__pages'}).text
+                                            .replace('str.', '').strip())
+            book_dict['aprx_reading_time'] = book_page_soup\
+                .find('span', attrs={'class': 'book__hours'})\
+                .find('span', attrs={'class': 'js-hours'}).text.strip()
+        except AttributeError:
+            print("Book pages not available")
+        self._add_book_stores_with_prices_to_book(book_dict, book_page_soup)
+
+    def _add_book_stores_with_prices_to_book(self, book_dict, book_page_soup):
+        book_stores_recommended_soup_list = book_page_soup\
+            .find('div', attrs={'id': 'buybox-bookstores-promoted'})\
+            .find_all('a', attrs={'data-type': 'książka'})
+        book_stores_others_soup = book_page_soup\
+            .find('div', attrs={'id': 'buybox-bookstores'})\
+            .find_all('a', attrs={'data-type': 'książka'})
+
+        recommended_book_stores_with_prices = self._create_dict_with_store_and_price(
+            book_stores_recommended_soup_list)
+        book_stores_others_soup = self._create_dict_with_store_and_price(
+            book_stores_others_soup)
+
+        book_dict['book_stores_with_prices'] = {**recommended_book_stores_with_prices,
+                                                **book_stores_others_soup}
+
+    @staticmethod
+    def _create_dict_with_store_and_price(book_store_soup_list):
+        book_store_with_prices_dict = {}
+        for book_store_soup in book_store_soup_list:
+            book_store_name = book_store_soup\
+                .find('div', attrs={'class': 'bookstore-name'}).text.strip()
+            book_store_price = book_store_soup\
+                .find('div', attrs={'class': 'bookstore-item-price'}).text\
+                .replace('\xa0zł', '').strip()
+            book_store_price = float(book_store_price)
+            book_store_with_prices_dict[book_store_name] = book_store_price
+
+        return book_store_with_prices_dict
+
+    def _get_book_content(self, book_href) -> BeautifulSoup:
+        self.driver.get(self.BASE_URL + book_href)
+        content = self.driver.page_source
+        return BeautifulSoup(content, features='html.parser')
 
 
 if __name__ == '__main__':
@@ -79,3 +144,11 @@ if __name__ == '__main__':
     books = WebScraper().get_top_100_data()
     for i, book in enumerate(books):
         print(f"{i}\t\t {book}")
+
+    BookDetailsWebScrapper().add_books_details(books)
+
+    print("*"*100)
+    print()
+
+    for i, book in enumerate(books):
+        print(f"{i+1}\t\t {book}")
