@@ -3,7 +3,7 @@ import mysql.connector
 from datetime import datetime
 
 
-class BooksSaver:
+class BooksDBOperator:
 
     def __init__(self):
         self.HOST = 'localhost'
@@ -12,6 +12,10 @@ class BooksSaver:
         self.DB_NAME ='webscraper_lubimyczytac'
 
     def connect_to_db(self):
+        """
+        Connect to database
+        :return: None
+        """
         my_db = mysql.connector.connect(
             host=self.HOST,
             user=self.USER,
@@ -21,9 +25,13 @@ class BooksSaver:
         )
         return my_db
 
-    def save_books_to_db(self, books, db_to_save_books=None):
-        if not db_to_save_books:
-            db_to_save_books = self.connect_to_db()
+    def save_books_to_db(self, books):
+        """
+        Method that will connect to proper mysql database and save book data
+        :param books: List of dicts with book details, each dict represents one book
+        :return: None
+        """
+        db_to_save_books = self.connect_to_db()
 
         table_name = self._create_table_for_books(db_to_save_books)
         self._save_books_to_table(db_to_save_books, table_name, books)
@@ -53,7 +61,6 @@ class BooksSaver:
         my_cursor.executemany(sql, val_to_insert)
         my_db.commit()
         print(my_cursor.rowcount, " records were inserted")
-        print("Last row id: ", my_cursor.lastrowid)
 
     @staticmethod
     def _create_table_for_books(my_db) -> str:
@@ -76,6 +83,10 @@ class BooksSaver:
         return table_name
 
     def show_existing_tables(self):
+        """
+        Displays tables that are saved in database
+        :return: None
+        """
         my_db = self.connect_to_db()
         my_cursor = my_db.cursor()
         my_cursor.execute(f"SHOW TABLES")
@@ -85,6 +96,11 @@ class BooksSaver:
             print(table_tuple[0])
 
     def show_table_elements(self, table_name):
+        """
+        Show records for given table
+        :param table_name: Name of the table, that will have the record displayed
+        :return: None
+        """
         my_db = self.connect_to_db()
         my_cursor = my_db.cursor()
         my_cursor.execute(f"SELECT * FROM {table_name}")
@@ -105,6 +121,11 @@ class BooksSaver:
             print()
 
     def remove_table(self, table_name):
+        """
+        Removed given table from database
+        :param table_name: Name of the table, that will be removed
+        :return: None
+        """
         my_db = self.connect_to_db()
         my_cursor = my_db.cursor()
         my_cursor.execute(f"DROP TABLE {table_name}")

@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.options import Options
 
 DRIVER_PATH = "/usr/bin/chromedriver"
-# Book = collections.namedtuple('Book', 'book_name book_page_href author_name book_rating nmb_of_ratings')
 
 
 class WebScraper:
@@ -24,6 +23,12 @@ class WebScraper:
         self.NMB_OF_PAGES = 8
 
     def get_top_100_data(self):
+        """
+        Creates list with books from top150 category on lubimyczytac.pl.
+        Returned list of books contains details like book name, book author, book href, book_rating,
+        nmb_of_ratings
+        :return: List with dicts containing books data
+        """
         self.driver.get(self.TOP_100_BOOKS_URL)
 
         cookies_button = self.driver.find_element_by_xpath("/html/body")
@@ -31,6 +36,7 @@ class WebScraper:
 
         books_list = []
 
+        print("Getting books data from page 1")
         for page_numb in range(self.FIRST_PAGE_TO_CLICK, self.NMB_OF_PAGES+2):
             content = self.driver.page_source
             page_soup = BeautifulSoup(content, features='html.parser')
@@ -39,12 +45,12 @@ class WebScraper:
             if page_numb == self.NMB_OF_PAGES+1:
                 break
             self._load_page(page_numb)
+            print(f"Getting books data from page {page_numb}")
 
         return books_list
 
     def _load_page(self, page_numb):
         link = self.driver.find_element_by_xpath(f"//a[@data-pager-page='{page_numb}']")
-        print(link.get_attribute('innerHTML'))
         time.sleep(4)
         self.driver.execute_script("arguments[0].click();", link)
         time.sleep(4)
@@ -60,8 +66,6 @@ class WebScraper:
     def _get_data_from_book_element(book_soup) -> dict:
         book_name_soup = book_soup\
             .find('a', attrs={'class': 'authorAllBooks__singleTextTitle'})
-        # print(book_name_soup)
-        # print(book_name_soup.get_attribute('href'))
         author_name_soup = book_soup\
             .find('div', attrs={'class': 'authorAllBooks__singleTextAuthor'})\
             .find('a')
@@ -84,6 +88,12 @@ class BookDetailsWebScrapper(WebScraper):
         super().__init__()
 
     def add_books_details(self, books_dict_with_href):
+        """
+        Adds more info to each book by using its href address
+        :param books_dict_with_href: List of dicts with books details that is going to have
+        additional information added
+        :return: None
+        """
         for book_dict in books_dict_with_href:
             self._add_book_details(book_dict)
 
