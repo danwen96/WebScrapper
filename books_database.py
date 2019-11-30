@@ -52,7 +52,7 @@ class BooksSaver:
 
         my_cursor.executemany(sql, val_to_insert)
         my_db.commit()
-        print(my_cursor.rowcount, " was inserted")
+        print(my_cursor.rowcount, " records were inserted")
         print("Last row id: ", my_cursor.lastrowid)
 
     @staticmethod
@@ -74,3 +74,38 @@ class BooksSaver:
                           "avg_book_price FLOAT"
                           ")".format(table_name))
         return table_name
+
+    def show_existing_tables(self):
+        my_db = self.connect_to_db()
+        my_cursor = my_db.cursor()
+        my_cursor.execute(f"SHOW TABLES")
+        result = my_cursor.fetchall()
+        print("Currently saved tables:")
+        for table_tuple in result:
+            print(table_tuple[0])
+
+    def show_table_elements(self, table_name):
+        my_db = self.connect_to_db()
+        my_cursor = my_db.cursor()
+        my_cursor.execute(f"SELECT * FROM {table_name}")
+        records = my_cursor.fetchall()
+        print(f"{table_name} records:")
+        for row in records:
+            print()
+            print(f"ID  {row[0]}")
+            print(f"book_name {row[1]}")
+            print(f"author_name {row[2]}")
+            print(f"book_rating {row[3]}")
+            print(f"nmb_of_ratings {row[4]}")
+            print(f"genres {row[5]}")
+            print(f"nmb_of_opinions {row[6]}")
+            print(f"nmb_of_pages {row[7]}")
+            print(f"apx_reading_time {row[8]}")
+            print(f"avg_book_price {row[9]}")
+            print()
+
+    def remove_table(self, table_name):
+        my_db = self.connect_to_db()
+        my_cursor = my_db.cursor()
+        my_cursor.execute(f"DROP TABLE {table_name}")
+        print(f"Table: {table_name} is dropped")

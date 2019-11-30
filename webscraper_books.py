@@ -2,6 +2,7 @@ import time
 
 from selenium import webdriver
 from bs4 import BeautifulSoup
+from selenium.webdriver.chrome.options import Options
 
 DRIVER_PATH = "/usr/bin/chromedriver"
 # Book = collections.namedtuple('Book', 'book_name book_page_href author_name book_rating nmb_of_ratings')
@@ -14,7 +15,11 @@ class WebScraper:
         self.TOP_100_BOOKS_URL= "{}/top100".format(self.BASE_URL)
         # options = webdriver.ChromeOptions()
         # options.add_argument('headless')
-        self.driver = webdriver.Chrome(DRIVER_PATH)
+        chrome_options = Options()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        self.driver = webdriver.Chrome(DRIVER_PATH, chrome_options=chrome_options)
         self.FIRST_PAGE_TO_CLICK = 2
         self.NMB_OF_PAGES = 8
 
