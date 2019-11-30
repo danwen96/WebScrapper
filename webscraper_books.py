@@ -1,10 +1,7 @@
 import time
 
-# import pandas as pd
 from selenium import webdriver
 from bs4 import BeautifulSoup
-# import collections
-
 
 DRIVER_PATH = "/usr/bin/chromedriver"
 # Book = collections.namedtuple('Book', 'book_name book_page_href author_name book_rating nmb_of_ratings')
@@ -96,7 +93,7 @@ class BookDetailsWebScrapper(WebScraper):
             book_dict['nmb_of_pages'] = int(book_page_soup
                                             .find('span', attrs={'class': 'book__pages'}).text
                                             .replace('str.', '').strip())
-            book_dict['aprx_reading_time'] = book_page_soup\
+            book_dict['apx_reading_time'] = book_page_soup\
                 .find('span', attrs={'class': 'book__hours'})\
                 .find('span', attrs={'class': 'js-hours'}).text.strip()
         except AttributeError:
@@ -118,6 +115,9 @@ class BookDetailsWebScrapper(WebScraper):
 
         book_dict['book_stores_with_prices'] = {**recommended_book_stores_with_prices,
                                                 **book_stores_others_soup}
+        book_values = book_dict['book_stores_with_prices'].values()
+        book_dict['avg_book_price'] = sum(book_values)/len(book_values) if len(book_values) != 0 \
+            else 0.0
 
     @staticmethod
     def _create_dict_with_store_and_price(book_store_soup_list):
@@ -137,18 +137,3 @@ class BookDetailsWebScrapper(WebScraper):
         self.driver.get(self.BASE_URL + book_href)
         content = self.driver.page_source
         return BeautifulSoup(content, features='html.parser')
-
-
-if __name__ == '__main__':
-    print("Hello")
-    books = WebScraper().get_top_100_data()
-    for i, book in enumerate(books):
-        print(f"{i}\t\t {book}")
-
-    BookDetailsWebScrapper().add_books_details(books)
-
-    print("*"*100)
-    print()
-
-    for i, book in enumerate(books):
-        print(f"{i+1}\t\t {book}")
