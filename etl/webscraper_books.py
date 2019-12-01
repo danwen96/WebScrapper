@@ -94,7 +94,8 @@ class BookDetailsWebScrapper(WebScraper):
         additional information added
         :return: None
         """
-        for book_dict in books_dict_with_href:
+        for i, book_dict in enumerate(books_dict_with_href):
+            print(f'Getting more details for book {i + 1}')
             self._add_book_details(book_dict)
 
     def _add_book_details(self, book_dict):
@@ -112,7 +113,7 @@ class BookDetailsWebScrapper(WebScraper):
                 .find('span', attrs={'class': 'book__hours'})\
                 .find('span', attrs={'class': 'js-hours'}).text.strip()
         except AttributeError:
-            print("Book pages not available")
+            pass
         self._add_book_stores_with_prices_to_book(book_dict, book_page_soup)
 
     def _add_book_stores_with_prices_to_book(self, book_dict, book_page_soup):
