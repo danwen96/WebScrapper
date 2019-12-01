@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.2" />
+<title>webscraper_python_hd_2.etl.webscraper_books API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>webscraper_python_hd_2.etl.webscraper_books</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import time
+
+from selenium import webdriver
+from bs4 import BeautifulSoup
+from selenium.webdriver.chrome.options import Options
+
+DRIVER_PATH = &#34;/usr/bin/chromedriver&#34;
+
+
+class WebScraper:
+
+    def __init__(self):
+        self.BASE_URL=&#34;https://lubimyczytac.pl&#34;
+        self.TOP_100_BOOKS_URL= &#34;{}/top100&#34;.format(self.BASE_URL)
+        # options = webdriver.ChromeOptions()
+        # options.add_argument(&#39;headless&#39;)
+        chrome_options = Options()
+        chrome_options.add_argument(&#39;--headless&#39;)
+        chrome_options.add_argument(&#39;--no-sandbox&#39;)
+        chrome_options.add_argument(&#39;--disable-dev-shm-usage&#39;)
+        self.driver = webdriver.Chrome(DRIVER_PATH, chrome_options=chrome_options)
+        self.FIRST_PAGE_TO_CLICK = 2
+        self.NMB_OF_PAGES = 8
+
+    def get_top_100_data(self):
+        &#34;&#34;&#34;
+        Creates list with books from top150 category on lubimyczytac.pl.
+        Returned list of books contains details like book name, book author, book href, book_rating,
+        nmb_of_ratings
+        :return: List with dicts containing books data
+        &#34;&#34;&#34;
+        self.driver.get(self.TOP_100_BOOKS_URL)
+
+        cookies_button = self.driver.find_element_by_xpath(&#34;/html/body&#34;)
+        cookies_button.click()
+
+        books_list = []
+
+        print(&#34;Getting books data from page 1&#34;)
+        for page_numb in range(self.FIRST_PAGE_TO_CLICK, self.NMB_OF_PAGES+2):
+            content = self.driver.page_source
+            page_soup = BeautifulSoup(content, features=&#39;html.parser&#39;)
+            books_list += self._get_books_from_page(page_soup)
+
+            if page_numb == self.NMB_OF_PAGES+1:
+                break
+            self._load_page(page_numb)
+            print(f&#34;Getting books data from page {page_numb}&#34;)
+
+        return books_list
+
+    def _load_page(self, page_numb):
+        link = self.driver.find_element_by_xpath(f&#34;//a[@data-pager-page=&#39;{page_numb}&#39;]&#34;)
+        time.sleep(4)
+        self.driver.execute_script(&#34;arguments[0].click();&#34;, link)
+        time.sleep(4)
+
+    def _get_books_from_page(self, page_soup):
+        books_collection_from_page = []
+        for book_soup in page_soup.findAll(&#39;div&#39;, attrs={&#39;class&#39;: &#39;authorAllBooks__single&#39;}):
+            book = self._get_data_from_book_element(book_soup)
+            books_collection_from_page.append(book)
+        return books_collection_from_page
+
+    @staticmethod
+    def _get_data_from_book_element(book_soup) -&gt; dict:
+        book_name_soup = book_soup\
+            .find(&#39;a&#39;, attrs={&#39;class&#39;: &#39;authorAllBooks__singleTextTitle&#39;})
+        author_name_soup = book_soup\
+            .find(&#39;div&#39;, attrs={&#39;class&#39;: &#39;authorAllBooks__singleTextAuthor&#39;})\
+            .find(&#39;a&#39;)
+        book_rating_soup = book_soup\
+            .find(&#39;span&#39;, attrs={&#39;class&#39;: &#39;listLibrary__ratingStarsNumber&#39;})
+        nmb_of_ratings_soup = book_soup\
+            .find(&#39;div&#39;, attrs={&#39;class&#39;: &#39;listLibrary__ratingAll&#39;})
+        return {
+            &#39;book_name&#39;: book_name_soup.text.strip(),
+            &#39;book_page_href&#39;: book_name_soup.attrs[&#39;href&#39;],
+            &#39;author_name&#39;: author_name_soup.text.strip(),
+            &#39;book_rating&#39;: float(book_rating_soup.text.strip().replace(&#39;,&#39;, &#39;.&#39;)),
+            &#39;nmb_of_ratings&#39;: int(nmb_of_ratings_soup.text.replace(&#39;ocen&#39;, &#39;&#39;).strip())
+        }
+
+
+class BookDetailsWebScrapper(WebScraper):
+
+    def __init__(self):
+        super().__init__()
+
+    def add_books_details(self, books_dict_with_href):
+        &#34;&#34;&#34;
+        Adds more info to each book by using its href address
+        :param books_dict_with_href: List of dicts with books details that is going to have
+        additional information added
+        :return: None
+        &#34;&#34;&#34;
+        for i, book_dict in enumerate(books_dict_with_href):
+            print(f&#39;Getting more details for book {i + 1}&#39;)
+            self._add_book_details(book_dict)
+
+    def _add_book_details(self, book_dict):
+        book_page_soup = self._get_book_content(book_dict[&#39;book_page_href&#39;])
+        book_dict[&#39;genres&#39;] = book_page_soup\
+            .find(&#39;a&#39;, attrs={&#39;class&#39;: &#39;book__category&#39;}).text.strip()
+        book_dict[&#39;nmb_of_opinions&#39;] = int(book_page_soup
+                                           .find(&#39;a&#39;, attrs={&#39;href&#39;: &#39;#lista-opinii&#39;}).text
+                                           .replace(&#39;opinii&#39;, &#39;&#39;).strip())
+        try:
+            book_dict[&#39;nmb_of_pages&#39;] = int(book_page_soup
+                                            .find(&#39;span&#39;, attrs={&#39;class&#39;: &#39;book__pages&#39;}).text
+                                            .replace(&#39;str.&#39;, &#39;&#39;).strip())
+            book_dict[&#39;apx_reading_time&#39;] = book_page_soup\
+                .find(&#39;span&#39;, attrs={&#39;class&#39;: &#39;book__hours&#39;})\
+                .find(&#39;span&#39;, attrs={&#39;class&#39;: &#39;js-hours&#39;}).text.strip()
+        except AttributeError:
+            pass
+        self._add_book_stores_with_prices_to_book(book_dict, book_page_soup)
+
+    def _add_book_stores_with_prices_to_book(self, book_dict, book_page_soup):
+        book_stores_recommended_soup_list = book_page_soup\
+            .find(&#39;div&#39;, attrs={&#39;id&#39;: &#39;buybox-bookstores-promoted&#39;})\
+            .find_all(&#39;a&#39;, attrs={&#39;data-type&#39;: &#39;książka&#39;})
+        book_stores_others_soup = book_page_soup\
+            .find(&#39;div&#39;, attrs={&#39;id&#39;: &#39;buybox-bookstores&#39;})\
+            .find_all(&#39;a&#39;, attrs={&#39;data-type&#39;: &#39;książka&#39;})
+
+        recommended_book_stores_with_prices = self._create_dict_with_store_and_price(
+            book_stores_recommended_soup_list)
+        book_stores_others_soup = self._create_dict_with_store_and_price(
+            book_stores_others_soup)
+
+        book_dict[&#39;book_stores_with_prices&#39;] = {**recommended_book_stores_with_prices,
+                                                **book_stores_others_soup}
+        book_values = book_dict[&#39;book_stores_with_prices&#39;].values()
+        book_dict[&#39;avg_book_price&#39;] = sum(book_values)/len(book_values) if len(book_values) != 0 \
+            else 0.0
+
+    @staticmethod
+    def _create_dict_with_store_and_price(book_store_soup_list):
+        book_store_with_prices_dict = {}
+        for book_store_soup in book_store_soup_list:
+            book_store_name = book_store_soup\
+                .find(&#39;div&#39;, attrs={&#39;class&#39;: &#39;bookstore-name&#39;}).text.strip()
+            book_store_price = book_store_soup\
+                .find(&#39;div&#39;, attrs={&#39;class&#39;: &#39;bookstore-item-price&#39;}).text\
+                .replace(&#39;\xa0zł&#39;, &#39;&#39;).strip()
+            book_store_price = float(book_store_price)
+            book_store_with_prices_dict[book_store_name] = book_store_price
+
+        return book_store_with_prices_dict
+
+    def _get_book_content(self, book_href) -&gt; BeautifulSoup:
+        self.driver.get(self.BASE_URL + book_href)
+        content = self.driver.page_source
+        return BeautifulSoup(content, features=&#39;html.parser&#39;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="webscraper_python_hd_2.etl.webscraper_books.BookDetailsWebScrapper"><code class="flex name class">
+<span>class <span class="ident">BookDetailsWebScrapper</span></span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BookDetailsWebScrapper(WebScraper):
+
+    def __init__(self):
+        super().__init__()
+
+    def add_books_details(self, books_dict_with_href):
+        &#34;&#34;&#34;
+        Adds more info to each book by using its href address
+        :param books_dict_with_href: List of dicts with books details that is going to have
+        additional information added
+        :return: None
+        &#34;&#34;&#34;
+        for i, book_dict in enumerate(books_dict_with_href):
+            print(f&#39;Getting more details for book {i + 1}&#39;)
+            self._add_book_details(book_dict)
+
+    def _add_book_details(self, book_dict):
+        book_page_soup = self._get_book_content(book_dict[&#39;book_page_href&#39;])
+        book_dict[&#39;genres&#39;] = book_page_soup\
+            .find(&#39;a&#39;, attrs={&#39;class&#39;: &#39;book__category&#39;}).text.strip()
+        book_dict[&#39;nmb_of_opinions&#39;] = int(book_page_soup
+                                           .find(&#39;a&#39;, attrs={&#39;href&#39;: &#39;#lista-opinii&#39;}).text
+                                           .replace(&#39;opinii&#39;, &#39;&#39;).strip())
+        try:
+            book_dict[&#39;nmb_of_pages&#39;] = int(book_page_soup
+                                            .find(&#39;span&#39;, attrs={&#39;class&#39;: &#39;book__pages&#39;}).text
+                                            .replace(&#39;str.&#39;, &#39;&#39;).strip())
+            book_dict[&#39;apx_reading_time&#39;] = book_page_soup\
+                .find(&#39;span&#39;, attrs={&#39;class&#39;: &#39;book__hours&#39;})\
+                .find(&#39;span&#39;, attrs={&#39;class&#39;: &#39;js-hours&#39;}).text.strip()
+        except AttributeError:
+            pass
+        self._add_book_stores_with_prices_to_book(book_dict, book_page_soup)
+
+    def _add_book_stores_with_prices_to_book(self, book_dict, book_page_soup):
+        book_stores_recommended_soup_list = book_page_soup\
+            .find(&#39;div&#39;, attrs={&#39;id&#39;: &#39;buybox-bookstores-promoted&#39;})\
+            .find_all(&#39;a&#39;, attrs={&#39;data-type&#39;: &#39;książka&#39;})
+        book_stores_others_soup = book_page_soup\
+            .find(&#39;div&#39;, attrs={&#39;id&#39;: &#39;buybox-bookstores&#39;})\
+            .find_all(&#39;a&#39;, attrs={&#39;data-type&#39;: &#39;książka&#39;})
+
+        recommended_book_stores_with_prices = self._create_dict_with_store_and_price(
+            book_stores_recommended_soup_list)
+        book_stores_others_soup = self._create_dict_with_store_and_price(
+            book_stores_others_soup)
+
+        book_dict[&#39;book_stores_with_prices&#39;] = {**recommended_book_stores_with_prices,
+                                                **book_stores_others_soup}
+        book_values = book_dict[&#39;book_stores_with_prices&#39;].values()
+        book_dict[&#39;avg_book_price&#39;] = sum(book_values)/len(book_values) if len(book_values) != 0 \
+            else 0.0
+
+    @staticmethod
+    def _create_dict_with_store_and_price(book_store_soup_list):
+        book_store_with_prices_dict = {}
+        for book_store_soup in book_store_soup_list:
+            book_store_name = book_store_soup\
+                .find(&#39;div&#39;, attrs={&#39;class&#39;: &#39;bookstore-name&#39;}).text.strip()
+            book_store_price = book_store_soup\
+                .find(&#39;div&#39;, attrs={&#39;class&#39;: &#39;bookstore-item-price&#39;}).text\
+                .replace(&#39;\xa0zł&#39;, &#39;&#39;).strip()
+            book_store_price = float(book_store_price)
+            book_store_with_prices_dict[book_store_name] = book_store_price
+
+        return book_store_with_prices_dict
+
+    def _get_book_content(self, book_href) -&gt; BeautifulSoup:
+        self.driver.get(self.BASE_URL + book_href)
+        content = self.driver.page_source
+        return BeautifulSoup(content, features=&#39;html.parser&#39;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="webscraper_python_hd_2.etl.webscraper_books.WebScraper" href="#webscraper_python_hd_2.etl.webscraper_books.WebScraper">WebScraper</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="webscraper_python_hd_2.etl.webscraper_books.BookDetailsWebScrapper.add_books_details"><code class="name flex">
+<span>def <span class="ident">add_books_details</span></span>(<span>self, books_dict_with_href)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Adds more info to each book by using its href address
+:param books_dict_with_href: List of dicts with books details that is going to have
+additional information added
+:return: None</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_books_details(self, books_dict_with_href):
+    &#34;&#34;&#34;
+    Adds more info to each book by using its href address
+    :param books_dict_with_href: List of dicts with books details that is going to have
+    additional information added
+    :return: None
+    &#34;&#34;&#34;
+    for i, book_dict in enumerate(books_dict_with_href):
+        print(f&#39;Getting more details for book {i + 1}&#39;)
+        self._add_book_details(book_dict)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="webscraper_python_hd_2.etl.webscraper_books.WebScraper" href="#webscraper_python_hd_2.etl.webscraper_books.WebScraper">WebScraper</a></b></code>:
+<ul class="hlist">
+<li><code><a title="webscraper_python_hd_2.etl.webscraper_books.WebScraper.get_top_100_data" href="#webscraper_python_hd_2.etl.webscraper_books.WebScraper.get_top_100_data">get_top_100_data</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="webscraper_python_hd_2.etl.webscraper_books.WebScraper"><code class="flex name class">
+<span>class <span class="ident">WebScraper</span></span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class WebScraper:
+
+    def __init__(self):
+        self.BASE_URL=&#34;https://lubimyczytac.pl&#34;
+        self.TOP_100_BOOKS_URL= &#34;{}/top100&#34;.format(self.BASE_URL)
+        # options = webdriver.ChromeOptions()
+        # options.add_argument(&#39;headless&#39;)
+        chrome_options = Options()
+        chrome_options.add_argument(&#39;--headless&#39;)
+        chrome_options.add_argument(&#39;--no-sandbox&#39;)
+        chrome_options.add_argument(&#39;--disable-dev-shm-usage&#39;)
+        self.driver = webdriver.Chrome(DRIVER_PATH, chrome_options=chrome_options)
+        self.FIRST_PAGE_TO_CLICK = 2
+        self.NMB_OF_PAGES = 8
+
+    def get_top_100_data(self):
+        &#34;&#34;&#34;
+        Creates list with books from top150 category on lubimyczytac.pl.
+        Returned list of books contains details like book name, book author, book href, book_rating,
+        nmb_of_ratings
+        :return: List with dicts containing books data
+        &#34;&#34;&#34;
+        self.driver.get(self.TOP_100_BOOKS_URL)
+
+        cookies_button = self.driver.find_element_by_xpath(&#34;/html/body&#34;)
+        cookies_button.click()
+
+        books_list = []
+
+        print(&#34;Getting books data from page 1&#34;)
+        for page_numb in range(self.FIRST_PAGE_TO_CLICK, self.NMB_OF_PAGES+2):
+            content = self.driver.page_source
+            page_soup = BeautifulSoup(content, features=&#39;html.parser&#39;)
+            books_list += self._get_books_from_page(page_soup)
+
+            if page_numb == self.NMB_OF_PAGES+1:
+                break
+            self._load_page(page_numb)
+            print(f&#34;Getting books data from page {page_numb}&#34;)
+
+        return books_list
+
+    def _load_page(self, page_numb):
+        link = self.driver.find_element_by_xpath(f&#34;//a[@data-pager-page=&#39;{page_numb}&#39;]&#34;)
+        time.sleep(4)
+        self.driver.execute_script(&#34;arguments[0].click();&#34;, link)
+        time.sleep(4)
+
+    def _get_books_from_page(self, page_soup):
+        books_collection_from_page = []
+        for book_soup in page_soup.findAll(&#39;div&#39;, attrs={&#39;class&#39;: &#39;authorAllBooks__single&#39;}):
+            book = self._get_data_from_book_element(book_soup)
+            books_collection_from_page.append(book)
+        return books_collection_from_page
+
+    @staticmethod
+    def _get_data_from_book_element(book_soup) -&gt; dict:
+        book_name_soup = book_soup\
+            .find(&#39;a&#39;, attrs={&#39;class&#39;: &#39;authorAllBooks__singleTextTitle&#39;})
+        author_name_soup = book_soup\
+            .find(&#39;div&#39;, attrs={&#39;class&#39;: &#39;authorAllBooks__singleTextAuthor&#39;})\
+            .find(&#39;a&#39;)
+        book_rating_soup = book_soup\
+            .find(&#39;span&#39;, attrs={&#39;class&#39;: &#39;listLibrary__ratingStarsNumber&#39;})
+        nmb_of_ratings_soup = book_soup\
+            .find(&#39;div&#39;, attrs={&#39;class&#39;: &#39;listLibrary__ratingAll&#39;})
+        return {
+            &#39;book_name&#39;: book_name_soup.text.strip(),
+            &#39;book_page_href&#39;: book_name_soup.attrs[&#39;href&#39;],
+            &#39;author_name&#39;: author_name_soup.text.strip(),
+            &#39;book_rating&#39;: float(book_rating_soup.text.strip().replace(&#39;,&#39;, &#39;.&#39;)),
+            &#39;nmb_of_ratings&#39;: int(nmb_of_ratings_soup.text.replace(&#39;ocen&#39;, &#39;&#39;).strip())
+        }</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="webscraper_python_hd_2.etl.webscraper_books.BookDetailsWebScrapper" href="#webscraper_python_hd_2.etl.webscraper_books.BookDetailsWebScrapper">BookDetailsWebScrapper</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="webscraper_python_hd_2.etl.webscraper_books.WebScraper.get_top_100_data"><code class="name flex">
+<span>def <span class="ident">get_top_100_data</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Creates list with books from top150 category on lubimyczytac.pl.
+Returned list of books contains details like book name, book author, book href, book_rating,
+nmb_of_ratings
+:return: List with dicts containing books data</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_top_100_data(self):
+    &#34;&#34;&#34;
+    Creates list with books from top150 category on lubimyczytac.pl.
+    Returned list of books contains details like book name, book author, book href, book_rating,
+    nmb_of_ratings
+    :return: List with dicts containing books data
+    &#34;&#34;&#34;
+    self.driver.get(self.TOP_100_BOOKS_URL)
+
+    cookies_button = self.driver.find_element_by_xpath(&#34;/html/body&#34;)
+    cookies_button.click()
+
+    books_list = []
+
+    print(&#34;Getting books data from page 1&#34;)
+    for page_numb in range(self.FIRST_PAGE_TO_CLICK, self.NMB_OF_PAGES+2):
+        content = self.driver.page_source
+        page_soup = BeautifulSoup(content, features=&#39;html.parser&#39;)
+        books_list += self._get_books_from_page(page_soup)
+
+        if page_numb == self.NMB_OF_PAGES+1:
+            break
+        self._load_page(page_numb)
+        print(f&#34;Getting books data from page {page_numb}&#34;)
+
+    return books_list</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="webscraper_python_hd_2.etl" href="index.html">webscraper_python_hd_2.etl</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="webscraper_python_hd_2.etl.webscraper_books.BookDetailsWebScrapper" href="#webscraper_python_hd_2.etl.webscraper_books.BookDetailsWebScrapper">BookDetailsWebScrapper</a></code></h4>
+<ul class="">
+<li><code><a title="webscraper_python_hd_2.etl.webscraper_books.BookDetailsWebScrapper.add_books_details" href="#webscraper_python_hd_2.etl.webscraper_books.BookDetailsWebScrapper.add_books_details">add_books_details</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="webscraper_python_hd_2.etl.webscraper_books.WebScraper" href="#webscraper_python_hd_2.etl.webscraper_books.WebScraper">WebScraper</a></code></h4>
+<ul class="">
+<li><code><a title="webscraper_python_hd_2.etl.webscraper_books.WebScraper.get_top_100_data" href="#webscraper_python_hd_2.etl.webscraper_books.WebScraper.get_top_100_data">get_top_100_data</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.2</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
