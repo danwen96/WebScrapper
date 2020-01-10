@@ -19,8 +19,9 @@ class WebScraper:
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
         self.driver = webdriver.Chrome(DRIVER_PATH, chrome_options=chrome_options)
+        self.driver.set_page_load_timeout(120)
         self.FIRST_PAGE_TO_CLICK = 2
-        self.NMB_OF_PAGES = 8
+        self.NMB_OF_PAGES = 7
 
     def get_top_100_data(self):
         """
@@ -143,7 +144,9 @@ class BookDetailsWebScrapper(WebScraper):
                 .find('div', attrs={'class': 'bookstore-name'}).text.strip()
             book_store_price = book_store_soup\
                 .find('div', attrs={'class': 'bookstore-item-price'}).text\
-                .replace('\xa0zł', '').strip()
+                .replace('\xa0zł', '')\
+                .replace('od', '')\
+                .strip()
             book_store_price = float(book_store_price)
             book_store_with_prices_dict[book_store_name] = book_store_price
 
