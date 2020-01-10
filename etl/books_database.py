@@ -1,6 +1,28 @@
 import mysql.connector
+import pathlib
+import json
 
 from datetime import datetime
+
+from etl import utils
+
+PATH_TO_STATE = f"{pathlib.Path(__file__).parent}/state"
+
+
+def load_data():
+    """
+    Performs loading books to data base operation
+    :return:
+    """
+    with open(f'{PATH_TO_STATE}/current_state.json', 'r') as f:
+        cur_state = json.load(f)
+
+    if cur_state['current_state'] != 1:
+        print("You have to perform transfer operations first!")
+        return
+    books = cur_state['books']
+    BooksDBOperator().save_books_to_db(books)
+    utils.clear_data()
 
 
 class BooksDBOperator:

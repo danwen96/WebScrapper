@@ -1,11 +1,14 @@
 import argparse
-from etl import books_database, webscraper_books
+from etl import books_database, webscraper_books, coordinator
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--etl", action='store_true', help="Perform all etl processes")
+    parser.add_argument("--etl", action='store_true', help="Perform all etl steps with one run")
+    parser.add_argument("--extract", action='store_true', help="Performs extract step")
+    parser.add_argument("--transform", action='store_true', help="Perform transform step")
+    parser.add_argument("--load", action='store_true', help="Perform load to database step")
     parser.add_argument("--show_saved_tables", action='store_true', help="Displays saved tables")
     parser.add_argument("--show_table", help="Displays given table, require table name "
                                              "after this option usage")
@@ -13,6 +16,15 @@ if __name__ == '__main__':
                                                "name after this option usage")
 
     args = parser.parse_args()
+
+    if args.extract:
+        coordinator.perform_extract()
+
+    if args.transform:
+        coordinator.perform_transform()
+
+    if args.load:
+        coordinator.perform_load()
 
     if args.etl:
         print("Start of data web scraping")

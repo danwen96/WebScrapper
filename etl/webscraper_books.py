@@ -1,10 +1,73 @@
 import time
+import pathlib
+import json
+from telnetlib import EC
 
+import selenium
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import TimeoutException
+
+from etl import utils
 
 DRIVER_PATH = "/usr/bin/chromedriver"
+PATH_TO_STATE = f"{pathlib.Path(__file__).parent}/state"
+PATH_TO_DATA = f"{pathlib.Path(__file__).parent}/state/data"
+
+
+def extract_data():
+    """
+    Extracts the data from the web page
+    :return:
+    """
+    books = WebScraper().get_top_100_data()
+    time.sleep(2)
+    BookDetailsWebScrapper().save_book_details(books)
+    _save_extract_state(books)
+
+
+def _save_extract_state(books):
+    """
+    Saves information about successful extraction
+    :return:
+    """
+    extract_state = {
+        'current_state': 0,
+        'books': books
+    }
+    with open(f'{PATH_TO_STATE}/current_state.json', 'w') as f:
+        json.dump(extract_state, f)
+
+
+def transform_data():
+    """
+    Transforms the collected data
+    :return:
+    """
+    with open(f'{PATH_TO_STATE}/current_state.json', 'r') as f:
+        cur_state = json.load(f)
+    if cur_state['current_state'] != 0:
+        print("You have to extract before transforming the data!")
+        return
+    books = cur_state['books']
+    BookDetailsWebScrapper().transform_book_details(books)
+    _save_transform_state(books)
+
+
+def _save_transform_state(books):
+    """
+    Saves the transformed data to load it later
+    :param books:
+    :return:
+    """
+    utils.clear_data()
+    transform_state = {
+        'current_state': 1,
+        'books': books
+    }
+    with open(f'{PATH_TO_STATE}/current_state.json', 'w') as f:
+        json.dump(transform_state, f)
 
 
 class WebScraper:
@@ -88,6 +151,38 @@ class BookDetailsWebScrapper(WebScraper):
     def __init__(self):
         super().__init__()
 
+    def save_book_details(self, book_dict_with_href):
+        """
+        Saves each book page to file in data
+        :param book_dict_with_href:
+        :return:
+        """
+        for i, book_dict in enumerate(book_dict_with_href):
+            print(f'Saving data for book {i + 1}')
+            self._save_book_detail(book_dict, i)
+
+    def _save_book_detail(self, book_dict, book_nmb):
+        """
+        Saves details about given book to file
+        :param book_dict:
+        :return:
+        """
+        content = self._get_book_content(book_dict['book_page_href'])
+        with open(f'{PATH_TO_DATA}/{book_nmb}.html', 'w') as file:
+            file.write(content)
+
+    def transform_book_details(self, books_dict):
+        """
+        Transforms the book details
+        :param books_dict:
+        :return:
+        """
+        for i, book_dict in enumerate(books_dict):
+            print(f'Transforming data for book {i + 1}')
+            with open(f'{PATH_TO_DATA}/{i}.html', 'r') as f:
+                content = f.read()
+            self._add_book_details(book_dict, content)
+
     def add_books_details(self, books_dict_with_href):
         """
         Adds more info to each book by using its href address
@@ -97,10 +192,11 @@ class BookDetailsWebScrapper(WebScraper):
         """
         for i, book_dict in enumerate(books_dict_with_href):
             print(f'Getting more details for book {i + 1}')
-            self._add_book_details(book_dict)
+            book_content = self._get_book_content(book_dict['book_page_href'])
+            self._add_book_details(book_dict, book_content)
 
-    def _add_book_details(self, book_dict):
-        book_page_soup = self._get_book_content(book_dict['book_page_href'])
+    def _add_book_details(self, book_dict, content):
+        book_page_soup = BeautifulSoup(content, features='html.parser')
         book_dict['genres'] = book_page_soup\
             .find('a', attrs={'class': 'book__category'}).text.strip()
         book_dict['nmb_of_opinions'] = int(book_page_soup
@@ -152,7 +248,13 @@ class BookDetailsWebScrapper(WebScraper):
 
         return book_store_with_prices_dict
 
-    def _get_book_content(self, book_href) -> BeautifulSoup:
-        self.driver.get(self.BASE_URL + book_href)
-        content = self.driver.page_source
-        return BeautifulSoup(content, features='html.parser')
+    def _get_book_content(self, book_href) -> str:
+        is_content_rdy = False
+        while not is_content_rdy:
+            try:
+                self.driver.get(self.BASE_URL + book_href)
+                content = self.driver.page_source
+                is_content_rdy = True
+            except TimeoutException:
+                print("Trying to get page again")
+        return content
