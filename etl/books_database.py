@@ -25,6 +25,7 @@ def load_data():
     books = cur_state['books']
     BooksDBOperator().save_books_to_db(books)
     utils.clear_data()
+    print("Data successfully saved in database")
 
 
 class BooksDBOperator:

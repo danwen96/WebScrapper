@@ -34,7 +34,7 @@ def perform_transform():
     """
     print("Performing data transformation...")
     webscraper_books.transform_data()
-    print("Data successfully transformed, it is ready to be loaded to data base!")
+
 
 
 def perform_load():
@@ -44,7 +44,7 @@ def perform_load():
     """
     print("Performing data loading to db operation...")
     books_database.load_data()
-    print("Data successfully saved in database")
+
 
 
 def perform_export_of_table_to_files(table_name):

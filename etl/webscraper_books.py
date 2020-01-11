@@ -53,6 +53,7 @@ def transform_data():
     books = cur_state['books']
     BookDetailsWebScrapper().transform_book_details(books)
     _save_transform_state(books)
+    print("Data successfully transformed, it is ready to be loaded to data base!")
 
 
 def _save_transform_state(books):
