@@ -21,6 +21,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    coordinator.create_data_exports_folder()
+
     if args.export_table_csv:
         coordinator.perform_export_of_table_to_csv(args.export_table_csv)
 

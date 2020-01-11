@@ -7,6 +7,15 @@ import subprocess
 from etl import webscraper_books, utils, books_database
 
 
+def create_data_exports_folder():
+    """
+    Creates folders for exports and data
+    :return:
+    """
+    subprocess.run(['mkdir', '-p', f'{pathlib.Path(__file__).parent}/state/data'])
+    subprocess.run(['mkdir', '-p', f'{pathlib.Path(__file__).parent.parent}/exports/books'])
+
+
 def perform_extract():
     """
     Coordinates the extraction of data
