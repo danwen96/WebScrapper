@@ -14,8 +14,18 @@ if __name__ == '__main__':
                                              "after this option usage")
     parser.add_argument("--remove_table", help="Removed given table, requires table "
                                                "name after this option usage")
+    parser.add_argument("--export_table_csv", help="Exports data from given table "
+                                                   "to file in csv format in folder exports")
+    parser.add_argument("--export_table_to_files", help="Exports data from given table to "
+                                                        "different files in folder exports")
 
     args = parser.parse_args()
+
+    if args.export_table_csv:
+        coordinator.perform_export_of_table_to_csv(args.export_table_csv)
+
+    if args.export_table_to_files:
+        coordinator.perform_export_of_table_to_files(args.export_table_to_files)
 
     if args.extract:
         coordinator.perform_extract()

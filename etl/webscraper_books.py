@@ -82,9 +82,9 @@ class WebScraper:
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
         self.driver = webdriver.Chrome(DRIVER_PATH, chrome_options=chrome_options)
-        self.driver.set_page_load_timeout(120)
+        self.driver.set_page_load_timeout(20)
         self.FIRST_PAGE_TO_CLICK = 2
-        self.NMB_OF_PAGES = 7
+        self.NMB_OF_PAGES = 15
 
     def get_top_100_data(self):
         """
@@ -101,15 +101,18 @@ class WebScraper:
         books_list = []
 
         print("Getting books data from page 1")
-        for page_numb in range(self.FIRST_PAGE_TO_CLICK, self.NMB_OF_PAGES+2):
-            content = self.driver.page_source
-            page_soup = BeautifulSoup(content, features='html.parser')
-            books_list += self._get_books_from_page(page_soup)
+        try:
+            for page_numb in range(self.FIRST_PAGE_TO_CLICK, self.NMB_OF_PAGES+2):
+                content = self.driver.page_source
+                page_soup = BeautifulSoup(content, features='html.parser')
+                books_list += self._get_books_from_page(page_soup)
 
-            if page_numb == self.NMB_OF_PAGES+1:
-                break
-            self._load_page(page_numb)
-            print(f"Getting books data from page {page_numb}")
+                if page_numb == self.NMB_OF_PAGES+1:
+                    break
+                self._load_page(page_numb)
+                print(f"Getting books data from page {page_numb}")
+        except:
+            pass
 
         return books_list
 

@@ -1,12 +1,14 @@
 import mysql.connector
 import pathlib
 import json
+import csv
 
 from datetime import datetime
 
 from etl import utils
 
 PATH_TO_STATE = f"{pathlib.Path(__file__).parent}/state"
+PATH_TO_EXPORTS = f"{pathlib.Path(__file__).parent}/../exports"
 
 
 def load_data():
@@ -117,6 +119,43 @@ class BooksDBOperator:
         for table_tuple in result:
             print(table_tuple[0])
 
+    def export_table_elements(self, table_name):
+        """
+        Exports table elements to different files in exports folder
+        :param table_name: Name of the table to be exported
+        :return:
+        """
+        my_db = self.connect_to_db()
+        my_cursor = my_db.cursor()
+        my_cursor.execute(f"SELECT * FROM {table_name}")
+        records = my_cursor.fetchall()
+        for i, row in enumerate(records):
+            with open(f'{PATH_TO_EXPORTS}/books/{i + 1}.txt', 'w') as file:
+                print(f"Saving details for book {i + 1}")
+                file.write(self._get_row_str(row))
+
+    def export_table_elements_csv(self, table_name):
+        """
+        Exports table elements to csv file
+        :param table_name: Name of the table to be exported
+        :return:
+        """
+        my_db = self.connect_to_db()
+        my_cursor = my_db.cursor()
+        my_cursor.execute(f"SELECT * FROM {table_name}")
+        records = my_cursor.fetchall()
+        with open(f'{PATH_TO_EXPORTS}/books_{table_name}.csv', mode='w') as csv_file:
+            csv_writer = csv.writer(csv_file, delimiter=',', quotechar='"',
+                                              quoting=csv.QUOTE_MINIMAL)
+
+            fieldnames = ['ID', 'book_name', 'author_name', 'book_rating', 'nmb_of_ratings',
+                          'genres', 'nmb_of_opinions', 'nmb_of_pages', 'apx_reading_time',
+                          'avg_book_price']
+            csv_writer.writerow(fieldnames)
+            for row in records:
+                csv_writer.writerow(row)
+
+
     def show_table_elements(self, table_name):
         """
         Show records for given table
@@ -129,18 +168,33 @@ class BooksDBOperator:
         records = my_cursor.fetchall()
         print(f"{table_name} records:")
         for row in records:
-            print()
-            print(f"ID  {row[0]}")
-            print(f"book_name {row[1]}")
-            print(f"author_name {row[2]}")
-            print(f"book_rating {row[3]}")
-            print(f"nmb_of_ratings {row[4]}")
-            print(f"genres {row[5]}")
-            print(f"nmb_of_opinions {row[6]}")
-            print(f"nmb_of_pages {row[7]}")
-            print(f"apx_reading_time {row[8]}")
-            print(f"avg_book_price {row[9]}")
-            print()
+            print(self._get_row_str(row))
+            # print()
+            # print(f"ID  {row[0]}")
+            # print(f"book_name {row[1]}")
+            # print(f"author_name {row[2]}")
+            # print(f"book_rating {row[3]}")
+            # print(f"nmb_of_ratings {row[4]}")
+            # print(f"genres {row[5]}")
+            # print(f"nmb_of_opinions {row[6]}")
+            # print(f"nmb_of_pages {row[7]}")
+            # print(f"apx_reading_time {row[8]}")
+            # print(f"avg_book_price {row[9]}")
+            # print()
+
+    def _get_row_str(self, row):
+        row_str = f"""
+book_name {row[1]}
+author_name {row[2]}
+book_rating {row[3]}
+nmb_of_ratings {row[4]}
+genres {row[5]}
+nmb_of_opinions {row[6]}
+nmb_of_pages {row[7]}
+apx_reading_time {row[8]}
+avg_book_price {row[9]}        
+"""
+        return row_str
 
     def remove_table(self, table_name):
         """
